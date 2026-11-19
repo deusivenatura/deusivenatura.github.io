@@ -4604,7 +4604,8 @@ function AdoptNudge({ onAdopt, reduce }) {
     return () => clearInterval(t);
   }, [reduce]);
   const cerrar = () => { try { sessionStorage.setItem("dv_nudge_off", "1"); } catch (e) {} setAbierto(false); };
-  const src = "sprites/" + NUDGE_HUEVOS[i] + "/huevo/01-huevo.webp";
+  const NUDGE_ARCH = { buho: "Huevo Buho.webp", zorro: "Huevo Zorro.webp", lobo: "Huevo Lobo.webp", cuervo: "Huevo Cuervo.webp" };
+  const src = encodeURI(NUDGE_ARCH[NUDGE_HUEVOS[i]]);
   if (!abierto) {
     return (
       <button className="pf-dock-mini pf-nudge-mini" onClick={onAdopt} aria-label="Adoptar a tu compañero" title="Adoptar a tu compañero">
