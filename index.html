@@ -3140,6 +3140,9 @@ h1.pf-title-deus span { -webkit-text-fill-color: var(--cm-cream); color: var(--c
 @keyframes cx-chispa { 0%,100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1.5) rotate(90deg); } }
 @keyframes cx-holo { 0% { background: #fff; } 33% { background: #67e8f9; } 66% { background: #f0abfc; } 100% { background: #fff; } }
 @media (prefers-reduced-motion: reduce) { .pf-tienda-item.cx-rar-leyenda, .cx-auraFx i { animation: none !important; } .cx-auraFx i { opacity: .8; } }
+
+.pf-link-docente { background: none; border: 0; padding: 4px; cursor: pointer; color: var(--muted, #aab); font: 700 13px/1.2 "Manrope", sans-serif; text-decoration: underline; }
+.pf-link-docente:hover { color: var(--cm-yellow, #FFD21F); }
 `;
 
 /* ============================================================
@@ -3498,10 +3501,10 @@ function SessionProvider({ children }) {
     });
   }, []);
 
-  const entrar = async () => {
+  const entrar = async (docente) => {
     setError("");
     const p = new GoogleAuthProvider();
-    p.setCustomParameters({ prompt: "select_account", ...(DOMINIO_INSTITUCIONAL ? { hd: DOMINIO_INSTITUCIONAL } : {}) });
+    p.setCustomParameters({ prompt: "select_account", ...(DOMINIO_INSTITUCIONAL && docente !== true ? { hd: DOMINIO_INSTITUCIONAL } : {}) });
     try {
       await signInWithPopup(auth, p);
     } catch (e) {
@@ -3584,7 +3587,8 @@ function IdentityPicker({ cursos, cursoSel, nombreSel, setCursoSel, setNombreSel
       {!user ? (
         <>
           <p className="pf-muted" style={{ fontSize: 13, margin: 0 }}>Entra con tu cuenta de Google. Así cada estudiante juega solo con su propio nombre.</p>
-          <button className="pf-btn-google" onClick={entrar}><GoogleG /> Continuar con Google</button>
+          <button className="pf-btn-google" onClick={() => entrar()}><GoogleG /> Continuar con Google</button>
+          {DOMINIO_INSTITUCIONAL && <button type="button" className="pf-link-docente" onClick={() => entrar(true)}>Soy docente (entrar con otro correo)</button>}
           {error && <p className="pf-muted" style={{ fontSize: 13, margin: 0, color: "#b3261e" }}>{error}</p>}
         </>
       ) : (
@@ -5264,7 +5268,7 @@ function AdminPanel({ tpData, nav }) {
         <div className="pf-perfil-card pf-perfil-login">
           <h3 className="pf-perfil-h">Solo para el profesor</h3>
           <p className="pf-muted" style={{ margin: 0 }}>{user ? "La cuenta " + user.email + " no tiene acceso al panel docente." : "Inicia sesión con tu correo de profesor para ver el panel."}</p>
-          {!user ? <button className="pf-btn-google" onClick={entrar}><GoogleG /> Continuar con Google</button> : <button className="pf-btn pf-btn-secondary" onClick={salir}><LogOut size={15} /> Cerrar sesión</button>}
+          {!user ? <button className="pf-btn-google" onClick={() => entrar()}><GoogleG /> Continuar con Google</button> : <button className="pf-btn pf-btn-secondary" onClick={salir}><LogOut size={15} /> Cerrar sesión</button>}
         </div>
       </div>
     );
@@ -5624,7 +5628,8 @@ function PerfilPage({ tpData, nav }) {
             <li>Mira tu saldo de terrapesos y tu lugar en el curso.</li>
             <li>Sigue tu nivel, tu racha y tus insignias.</li>
           </ul>
-          <button className="pf-btn-google" onClick={entrar}><GoogleG /> Continuar con Google</button>
+          <button className="pf-btn-google" onClick={() => entrar()}><GoogleG /> Continuar con Google</button>
+          {DOMINIO_INSTITUCIONAL && <button type="button" className="pf-link-docente" onClick={() => entrar(true)}>Soy docente (entrar con otro correo)</button>}
           {DOMINIO_INSTITUCIONAL && <p className="pf-muted" style={{ fontSize: 13.5, margin: 0 }}>Usa tu correo @{DOMINIO_INSTITUCIONAL}</p>}
           {error && <p className="pf-perfil-error" role="alert">{error}</p>}
         </div>
